@@ -1,0 +1,70 @@
+﻿<!DOCTYPE html>
+<!-- 
+
+	YoutubeMixer
+	-----------------
+	Simple Overlay example
+	-----------------
+	Don't forget to use chrome!
+	
+-->
+
+<html lang=el>
+<meta charset=utf-8/>
+<title>YoutubeMixer - Simple Overlay example</title>
+<style type="text/css">
+	/* Don't forget to zero out the margins and paddings of the page */
+	body,html { margin:0; padding:0; background:black; font-family:Arial; color:white; }
+	
+	.box {
+		opacity:0.9;
+		background:#333;
+		border-radius:8px;
+		display:block;
+		width:400px;
+		height:200px;
+		padding:10px;
+		margin:40px auto;
+	}
+	
+	.box h1 {
+		border-bottom:1px solid #777;
+	}
+	
+	.box p {
+		font-size:14px;
+		font-weight:700;
+	}
+</style>
+<script type="text/javascript" src="../src/youtubemixer.js"></script>
+<script>
+ 
+ function main() {
+	// Add 2 videos in the playlist
+	// You can add the same video as many times as you want.
+	youtubeMixer.playlistPush("ht2TigJp88w",{start:90  , playfor:30});   //Start at 80 seconds, play for 20 seconds
+	youtubeMixer.playlistPush("ht2TigJp88w",{start:524 , playfor:30});	 //Start at 524 seconds, play till the 600 second timestamp.
+	
+	// Start the YoutubeMixer object
+	// By default it will fill the background
+	// if no overlay is specified, it won't use any
+	youtubeMixer.init({
+		elementID:"simple_overlay",
+		audio:true,
+		useProgressBar:true,
+		quality:"hd720" // Set the quality to HD720
+	});
+ }
+ 
+</script>
+<body onLoad="main();"></body>
+<div id="simple_overlay"> <!-- do not touch the style of this. it is auto generated. -->
+
+	<!-- User content to overlay the video -->
+	<div class="box">
+	<h1> YoutubeMixer </h1>
+	<p>Simple overlay example</p>
+	</div>
+
+</div>
+</html>

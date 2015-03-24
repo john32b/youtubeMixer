@@ -1,0 +1,40 @@
+﻿<!DOCTYPE html>
+<!-- 
+
+	YoutubeMixer
+	-----------------
+	Barebones example
+	-----------------
+	Don't forget to use chrome!
+	
+-->
+
+<html lang=el>
+<meta charset=utf-8/>
+<title>YoutubeMixer - Barebones Example</title>
+<style type="text/css">
+	/* Don't forget to zero out the margins and paddings of the page */
+	body,html { margin:0; padding:0; background:black;}
+</style>
+<script type="text/javascript" src="../src/youtubemixer.js"></script>
+<script>
+ 
+ function main() {
+	// Add 2 videos in the playlist
+	// You can add the same video as many times as you want.
+	youtubeMixer.playlistPush("ht2TigJp88w",{start:90  , playfor:30});   //Start at 80 seconds, play for 20 seconds
+	youtubeMixer.playlistPush("ht2TigJp88w",{start:524 , playfor:30});	 //Start at 524 seconds, play till the 600 second timestamp.
+	
+	// Start the YoutubeMixer object
+	// By default it will fill the background
+	// if no overlay is specified, it won't use any
+	youtubeMixer.init({
+		audio:true,
+		useProgressBar:true,
+		quality:"hd720" // Set the quality to HD720		
+	});
+ }
+ 
+</script>
+<body onLoad="main();"></body>
+</html>

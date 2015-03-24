@@ -1,0 +1,294 @@
+﻿<!DOCTYPE html>
+<!---------------------------------------------------;
+█░░█ █▀▀█ █░░█ ▀▀█▀▀ █░░█ █▀▀▄ █▀▀
+█▄▄█ █░░█ █░░█ ░░█░░ █░░█ █▀▀▄ █▀▀
+▄▄▄█ ▀▀▀▀ ░▀▀▀ ░░▀░░ ░▀▀▀ ▀▀▀░ ▀▀▀
+
+█▀▄▀█ ░▀░ █░█ █▀▀ █▀▀█
+█░▀░█ ▀█▀ ▄▀▄ █▀▀ █▄▄▀
+▀░░░▀ ▀▀▀ ▀░▀ ▀▀▀ ▀░▀▀
+-----------------------------------------------------;
+- Version 0.1
+- JohnDimi, <johndimi@outlook.com>, twitter@jondmt
+-------------------
+- project homepage: 
+- https://github.com/johndimi/youtubemixer
+----------------------------------------------------->
+<html lang=el>
+<meta charset=utf-8/>
+<title>Youtube fullscreen mixer</title>
+<meta name="description" content="Background youtube player and auto-mixer."/>
+<link rel="stylesheet" href="styles.css">
+<script type="text/javascript" src="../src/youtubemixer.js"></script>
+<script>
+
+	// -- Global vars  ---------------------
+	
+	var btn_audio;
+	var btn_next;
+	
+	// -- Functions ------------------------
+	
+	// Quick browser test
+	// source : http://stackoverflow.com/a/9851769
+	function browserTest() {
+		this.isOpera = !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0;
+		this.isFirefox = typeof InstallTrigger !== 'undefined';
+		this.isSafari = Object.prototype.toString.call(window.HTMLElement).indexOf('Constructor') > 0;
+		this.isChrome = !!window.chrome && !this.isOpera;
+		this.isIE = false || !!document.documentMode;
+	}//-----------------------------------------;
+	// Get all <button> elements and add callbacks on click
+	function initializeButtons() {
+		var btns = document.querySelectorAll("button");
+		for(var b=0;b<btns.length;b++){
+			btns[b].onclick = function(){
+				onButtonClick(this.getAttribute('name'));
+			}
+		}
+		btn_audio = document.querySelector("button[name=toggleSound]");
+		btn_next = document.querySelector("button[name=nextVideo]");
+	}//-----------------------------------------;
+	function onButtonClick(btnName) 
+	{
+		switch(btnName){
+		case "hide":
+		var box = document.getElementById("introbox");
+		box.style.opacity = 0;
+		box.style.top = "-40px";
+		box.addEventListener('webkitTransitionEnd', function(){box.style.display="none";});
+		break;
+
+		case "toggleSound":
+			var state = !youtubeMixer.getAudio();
+			youtubeMixer.setAudio(state)
+			if(state)
+				btn_audio.innerText = ">disable audio";
+			else
+				btn_audio.innerText = ">enable audio";
+		break;
+
+		case "nextVideo":
+			console.log("User - next video");
+			youtubeMixer.playNextVideo();
+		break;
+		};
+	}//-----------------------------------------;
+
+	function fx_centerProgress(text) {
+		var el = document.getElementById("centerProgress")
+		if(text) {
+			el.style.opacity = 1;
+			el.innerText = text;
+		}else {
+			el.style.opacity = 0;
+			el.innerText = "";
+		}
+	}//-----------------------------------------;
+
+	// Enable or disable the progress decal
+	function fx_showProgress(status) {
+		var el = document.getElementById("progressBar");
+		if(status) {
+			el.style.width = "50px";
+			el.style.opacity = 1;
+		}else {
+			el.style.width = "0px";
+			el.style.opacity = 0;
+		}
+	}//-----------------------------------------;
+
+	// Sets the youtubemixer status info
+	function setStatusText(text)  {
+		var el = document.getElementById("status_info");
+		el.innerText = text;
+		if(text=="") {
+			//el.style.width = "0px";
+			el.style.opacity = 0;
+		}else {
+			//el.style.width = "150px";
+			el.style.opacity = 1;
+		}
+	}//-----------------------------------------;
+
+	// Sets the current time info
+	function setTime(seconds,totalTime) {
+		//convert seconds to time string
+		var el = document.getElementById("time_info");
+		var str = formatNumberLength(Math.floor(seconds / 60), 2) +
+				  ":" +
+				  formatNumberLength(seconds % 60, 2);
+		el.innerText = str;
+	}//-----------------------------------------;
+	// Sets the playlist info
+	function setPlaylist(current,total) {
+		document.getElementById("playlist_info").innerText =
+			current + " of " + total;
+	}//-----------------------------------------;
+
+	// Helper function, create a number to string
+	// with padded 0's at the start.
+	function formatNumberLength(num, length) {
+		var r = "" + num;
+		while (r.length < length) r = "0" + r;
+		return r;
+	}//-----------------------------------------;
+
+	// Handle events emitted by the youtubeMixer
+	function eventHandler(event,data)
+	{
+		//#events
+		switch(event) {
+			case "api-loading":
+				// Fade in the intro box, once the youtube is just initializing
+				// bug-hack: I am using a timeout of 50ms, because otherwise the fade won't occur
+				//			 eventhough the element is still on the DOM
+				setTimeout(function(){
+					document.getElementById("introbox").style.top = "0px";
+					document.getElementById("introbox").style.opacity = 1;
+				},50);
+				fx_showProgress(1);
+				setStatusText("Loading API");
+			break;
+			case "video-play-first":
+				// Show basic info
+				document.querySelector("div.right").style.opacity = 1;
+				setTime(0);
+				setPlaylist(0,0);
+				btn_audio.innerText = ">enable audio";
+				btn_next.innerText = ">next video";
+				btn_audio.style.opacity = 1;
+				btn_next.style.opacity = 1;
+			break;
+			// When the video is just requested to play
+			case "video-buffering":
+				setStatusText("Buffering");
+				fx_showProgress(1);
+			break;
+			// The video just started playing
+			case "video-play":
+				fx_showProgress(0);
+				setStatusText("");
+			break;
+			// The video is currently loading
+			case "video-loading":
+				setStatusText("Preparing Video");
+				fx_showProgress(1);
+			break;
+			// The video is loaded on the background and is ready to play
+			case "video-ready":
+				setStatusText("");
+				fx_showProgress(0);
+			break;
+			case "time-update":
+				setTime(data[1] - data[0]); // show the remaining seconds
+			break;
+			case "playlist-update":
+				setPlaylist(data[0],data[1]);
+			break;
+		}
+
+	}//-----------------------------------------;
+
+	// Main entry function, when DOM is loaded.
+	function main() {
+
+		// Browser Test ---------------;
+		var btest = new browserTest();
+
+		if(btest.isIE){
+			var s  = "<h2>ERROR</h2><p>This page does not support Internet Explorer.<br/>";
+				s += "Get <a href='http://www.google.com/chrome'>google chrome</a></p>";
+			document.write(s);
+			return;
+		}
+
+		if(!btest.isChrome) {
+		var q = document.querySelector("#introbox");
+		var sect = document.createElement("section");
+			sect.classList.add("warning");
+			var s  = "<h2>WARNING!</h2><p>Google chrome is highly recommended!<br/>";
+				s += "You are not experiencing this as it was intended to. ";
+				s += "Rendering might be off and ugly, and some functionality might be buggy.</p>";
+			sect.innerHTML = s;
+			// Add this before the first section
+			q.insertBefore(sect,document.querySelector("#introbox>section"));
+		}//---------------------------;
+
+		// Init buttons
+		initializeButtons();
+
+		// -- Add some cool videos to the playlist
+		// - Title parameter does nothing for now , it's just for me to keep track of the videos order.
+		youtubeMixer.playlistPush("P5_GlAOCHyE",{start:5,playfor:30,once:true,title:"earthintro"});
+		youtubeMixer.playlistPush("Ho2m2th66GE",{start:32,playfor:30,title:"vessel"});
+		youtubeMixer.playlistPush("1jmLb2pZzUc",{start:71,playfor:30,title:"m83"});
+		youtubeMixer.playlistPush("rDBbaGCCIhk",{start:82,playfor:30,title:"lazerhawk"});
+		youtubeMixer.playlistPush("g3TRZamP85c",{start:36,playfor:40,title:"andromeda"});
+		youtubeMixer.playlistPush("S2tKc8_7jB4",{start:40,end:95,title:"akira"});
+
+	   youtubeMixer.eventHandler = eventHandler;
+
+	   // - Start the YoutubeMixer object
+	   youtubeMixer.init({
+		   //quality:"hd720", //uncomment to force hd720, default is auto quality
+		   useProgressBar:true,
+		   fullpage:true,
+		   elementID:"OVERLAY"
+		});
+
+	}//-----------------------------------------;
+
+</script>
+<body onLoad="main();">
+<div id="OVERLAY">
+	<!-- TOPBAR -------------------------------->
+	<div class="topBar">
+	<div class="left">
+		<h2><a href="" class="link">YoutubeMixer</a></h2>
+		<div id="progressBar"></div><p id="status_info"></p>
+	</div>
+	<div class="right">
+		<p>Time Left</p><div id="time_info"></div>
+		<p>Playing Video</p><div id="playlist_info"></div>
+	</div>
+	</div>
+	
+	<!-- ANOTHER BAR --------------------------->
+	<div class="topBar" style="background:0;text-align:right;display:block;">
+		<button name="toggleSound"></button>
+		<button name="nextVideo"></button>
+	</div>
+	
+	<!-- INTROBOX ------------------------------>
+	<div id="introbox">
+	<header><h1>YoutubeMixer</h1></header>
+	
+	<section>
+	<h2>What is it.</h2>
+		<p>YoutubeMixer is a javascript experiment. It will play youtube videos on the background of the page and auto-mix them.</p>
+		
+	<h2>Features.</h2>
+		<p>
+		# Videos on the playlist will loop forever.<br/>
+		# Video and Audio will crossfade when swapping videos.<br/>
+		# Dynamically resizable background. <span class="italic">(try to resize the window)</span><br/>
+		# Video embeds are preloaded so that they will play instantly.
+		</p>
+	
+	<h2>Notes</h2>
+		<p>
+		Currently, video playlists are statically defined from the source code.<br/>This is	 an early version, some bugs might be present.<br/>
+		You can enable the audio and skip the videos with the top right buttons<br/>
+		Checkout the <em><a class="link" href="https://github.com/johndimi/youtubeMixer">github</a></em> page for more info
+		</p>
+		
+	<button name="hide">Hide</button>
+	</section>
+	
+	<footer>
+		Version 0.1, John Dimi 2015, twitter: <em><a href="https://twitter.com/jondmt" class="link">@johndmt</a></em>
+	</footer>
+	</div>
+</div>
+</body></html>

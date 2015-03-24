@@ -1,0 +1,106 @@
+﻿<!DOCTYPE html>
+<!-- 
+
+	YoutubeMixer
+	-----------------
+	Events Example
+	-----------------
+	Don't forget to use chrome!
+	
+-->
+
+<html lang=el>
+<meta charset=utf-8/>
+<title>YoutubeMixer - Events Example</title>
+<style type="text/css">
+	/* Don't forget to zero out the margins and paddings of the page */
+	body,html { margin:0; padding:0; background:black; font-family:Arial; color:white; }
+	
+	.box {
+		opacity:0.9;
+		background:#333;
+		border-radius:8px;
+		display:block;
+		width:400px;
+		height:200px;
+		padding:10px;
+		margin:40px auto;
+	}
+	
+	.box h1 {
+		border-bottom:1px solid #777;
+	}
+	
+	.box p {
+		font-size:14px;
+		font-weight:700;
+	}
+	
+	#info {
+		font-size:12px;
+		color:yellow;
+	}
+	
+</style>
+<script type="text/javascript" src="../src/youtubemixer.js"></script>
+<script>
+ 
+ var infoElement;
+ var currentVideo = 0;
+ 
+ function main() {
+ 
+	infoElement = document.getElementById("info");
+ 
+	// Add 2 videos in the playlist
+	// You can add the same video as many times as you want.
+	youtubeMixer.playlistPush("ht2TigJp88w",{start:90  , playfor:30});   //Start at 80 seconds, play for 20 seconds
+	youtubeMixer.playlistPush("ht2TigJp88w",{start:524 , playfor:30});	 //Start at 524 seconds, play till the 600 second timestamp.
+	
+	// Get all events from the youtubeMixer here
+	youtubeMixer.eventHandler = function(events,data) {
+		
+		switch(events)
+		{
+			// Triggered every second
+			case "time-update":
+			infoElement.innerText = "Playing video " + currentVideo + " -- " + " Seconds: " + data[0] + " of " + data[1];
+			break;
+			
+			// Triggered on every video change
+			case "playlist-update":
+			currentVideo = data[0];
+			break;
+			
+			// Triggered only once
+			case "video-play-first":
+			document.querySelector(".box").style.visibility = "visible";
+			break;
+		
+		}	
+	};
+	
+	// Start the YoutubeMixer object
+	// By default it will fill the background
+	// if no overlay is specified, it won't use any
+	youtubeMixer.init({
+		elementID:"simple_overlay",
+		audio:true,
+		useProgressBar:true,
+		quality:"hd720" // Set the quality to HD720
+	});
+ }
+ 
+</script>
+<body onLoad="main();"></body>
+<div id="simple_overlay"> <!-- do not touch the style of this. it is auto generated. -->
+
+	<!-- User content to overlay the video -->
+	<div class="box" style="visibility:hidden;">
+	<h1> YoutubeMixer </h1>
+	<p>Simple events example</p>
+	<p id="info"></p>
+	</div>
+
+</div>
+</html>

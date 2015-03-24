@@ -1,0 +1,192 @@
+/* youtubeMixer Styles */
+/* ------------------- */
+/* Tested with chrome  */
+
+
+/* -- all   --------------------------------------- */
+
+body,html {
+	font-family: 'Franklin Gothic Medium', 'Franklin Gothic', 'ITC Franklin Gothic', Arial, sans-serif;
+	background-color: #111;
+	background: -webkit-gradient(linear, left top, left bottom,
+				color-stop(0%,#444), color-stop(100%,#111) ); /* Chrome gradiend */
+	color:#ddd;
+	height:100%;
+	margin:0;
+	padding:0;
+}
+
+h1,h2,h3,p {
+	padding:0;
+	margin:2px;
+}
+
+/* -- topbar -------------------------------------- */
+
+.topBar {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	align-items:center;
+	align-content: stretch;
+	background: black;
+	width:100%;
+	line-height: 1;
+}
+
+.topBar h2 {
+	color:white;
+}
+
+.topBar .left {
+	flex:2;
+}
+
+.topBar .right {
+	flex:1;
+	min-width: 250px;
+	text-align: right;
+	padding-right: 8px;
+
+	opacity: 0;
+	transition:all 0.5s ease-in-out;
+}
+
+.topBar * {
+	display:inline-block;
+	transition:all 0.5s ease-in-out;
+	color:#ddd;
+}
+
+.topBar p {
+	font-size:11px;
+	color:#888;
+	margin-right: 4px;
+}
+
+#progressBar {
+	transition:all 0.5s ease-in-out;
+	background: url(preloader.gif) no-repeat;
+	background-clip: content-box;
+	width:0px;
+	height:14px;
+	opacity:0;
+}
+
+.topBar button {
+	color:#bbb;
+	font-size:11px;
+	display: inline-block;
+	background:0;
+	border:0;
+	cursor: pointer;
+	transition:all 0.5s ease-in-out;
+	opacity:0;	/* Will fade in later */
+}
+
+/* -- others -------------------------------------- */
+
+.link {
+	text-decoration: none;
+}
+.link:visited {
+	color: inherit;
+}
+
+/* -- main box -------------------------------------- */
+
+#introbox {
+	margin:50px auto;
+	width:500px;
+	min-height:120px;
+	display:flex;
+	flex-direction:column;
+	background-color: #fff;
+	background:  -webkit-gradient(linear, left top, left bottom,
+				  color-stop(0%,#fff), color-stop(100%,#ddd) ); /* Chrome */
+	padding:8px 16px 2px 16px;
+	border-radius: 12px;
+	border:1px solid #ddd;
+	transition:all 0.5s ease-in-out;
+	opacity: 0;	/* Start invisible */
+	top:-40px; /* And out of the screen */
+	position: relative;
+}
+
+#introbox > header {
+	margin:0;
+	border-bottom:1px solid #ccc;
+}
+
+#introbox > section {
+	flex: 1;
+	margin:0px;
+	padding:8px 10px;
+}
+
+#introbox > .warning {
+	background-color:#FC2;
+	border-radius: 4px;
+	border:1px solid #A81;
+}
+#introbox > .warning p
+{
+	color:#111;
+}
+
+#introbox footer {
+	text-align: right;
+	font-size:11px;
+	color:#999;
+}
+
+#introbox footer em {
+	color:darksalmon;
+}
+
+#introbox h1 {
+	font-size:36px;
+	color:#d33;
+	font-weight: 600;
+}
+
+#introbox h2 {
+	font-size:16px;
+	color:#d33;
+}
+
+#introbox p {
+	font-size: 14px;
+	font-weight: 100;
+	color:#555;
+	margin-bottom:6px;
+}
+
+#introbox p em {
+	font-weight: 600;
+	color:#38f;
+}
+
+#introbox .italic {
+	font-size: 14px;
+	font-style: italic;
+	font-weight: 100;
+	color:#aaa;
+}
+
+#introbox button {
+	cursor: pointer;
+	margin-top:10px;
+	padding: 8px 16px;
+	font-weight: 600;
+	font-size: 13px;
+	line-height: 1;
+	color: #fff;
+	background: #38f;
+	border: 1px solid #5af;
+	border-radius: 4px;
+}
+
+#introbox button:hover {
+	background: #59f;
+}
