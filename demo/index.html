@@ -19,7 +19,7 @@
 <title>Youtube fullscreen mixer</title>
 <meta name="description" content="Background youtube player and auto-mixer."/>
 <link rel="stylesheet" href="styles.css">
-<script type="text/javascript" src="../src/youtubemixer.js"></script>
+<script type="text/javascript" src="../src/youtubemixer-min.js"></script>
 <script>
 
 	// -- Global vars  ---------------------
@@ -149,6 +149,8 @@
 				},50);
 				fx_showProgress(1);
 				setStatusText("Loading API");
+				// Set the version info
+				document.getElementById("version").innerText = youtubeMixer.version;				
 			break;
 			case "video-play-first":
 				// Show basic info
@@ -287,7 +289,7 @@
 	</section>
 	
 	<footer>
-		Version 0.1, John Dimi 2015, twitter: <em><a href="https://twitter.com/jondmt" class="link">@johndmt</a></em>
+		Version <span id="version">11</span>, John Dimi 2015, twitter: <em><a href="https://twitter.com/jondmt" class="link">@johndmt</a></em>
 	</footer>
 	</div>
 </div>

@@ -7,7 +7,7 @@
 █░▀░█ ▀█▀ ▄▀▄ █▀▀ █▄▄▀
 ▀░░░▀ ▀▀▀ ▀░▀ ▀▀▀ ▀░▀▀
 -----------------------------------------------------;
-- Version 0.1
+- Version 0.11
 - JohnDimi, <johndimi@outlook.com>, twitter@jondmt
 -----------------------------------------------------;
 - project homepage: 
@@ -18,6 +18,7 @@
 
 var youtubeMixer = new function() {
 	"use strict";
+	this.version = "0.11";
 	// Hold this, for easy reference
 	var THIS = this;
 	// Elements
@@ -40,14 +41,11 @@ var youtubeMixer = new function() {
 	var containerWidth, containerHeight;
 	// Whether a crossfade is in progress
 	var isSwapping = false;
-	// Whether it is currently buffering
-	var isBuffering = false;
 
 	// Timers for chacking progress and updating the sound crossfade
 	var timerProgress, timerVolume = null;
 	// reusable values, used in crossfading
 	var soundStep, volumeInc, volumeDec = 0;
-
 
 
 	// -- Some default parameters  ----------
@@ -200,7 +198,9 @@ var youtubeMixer = new function() {
 			overlay.style.overflowX = "hidden";
 
 			// Add the video container as the first element on the body
+			// todo: make sure that it's the only child!
 			document.body.appendChild(container);
+
 
 			// Add the window resize listener,
 			window.onresize = updateResize;
@@ -382,20 +382,19 @@ var youtubeMixer = new function() {
 	// Can also be called from the user to force a video skip
 	this.playNextVideo = function() {
 
-		if(isSwapping==true) {
+		if(isSwapping == true) {
 			console.warn("Was already swapping videos, returning.");
 			return;
 		}
 
-		if(videoWaiting==null) {
+		if(videoWaiting == null) {
 			console.error("Waiting video is not ready!!, returning.");
 			return;
 		}
 
-		console.log("Triggering Swap.");
+		console.log("# Request to play next video.");
 		THIS.eventHandler('swap-start');
 		isSwapping = true;
-		videoWaiting.firstPlay = true;
 		videoWaiting.holdPlay = false;
 		videoWaiting.playVideo();
 		THIS.eventHandler('video-buffering');
@@ -425,8 +424,10 @@ var youtubeMixer = new function() {
 			}
 		});
 
-		// Store the duration info, for future reference.
+		// -- Set some custom parameters on the videos
 		video.param = videoInfo;
+		video.isBuffering = false;
+		video.firstPlay = true;
 
 		var el_video = video.getIframe();
 		if(!DEBUG){
@@ -449,8 +450,8 @@ var youtubeMixer = new function() {
 	// Called when the video player is loaded and ready to play.
 	// = NOTE =
 	// The video is not ready to be played yet, I want to make sure
-	// it enters the screen when the preloader is off and the video
-	// actually starts playing, this happens in onPlayerStateChange();.
+	// it enters the screen when the youtube buffering is off and the video
+	// actually starts playing, this happens in onPlayerStateChange();
 	function onPlayerReady(e)
 	{
 		console.log("Video Player loaded, ready to play");
@@ -469,24 +470,25 @@ var youtubeMixer = new function() {
 
 		if(DEBUG) updateResize();
 
+		// It's the first time a video is ever played
 		if(videoPlaying==null)
 		{
-			console.log("videoPlaying set");
+			console.log("videoPlaying set, id=", video.param.id);
 			videoPlaying = video;
 			videoPlaying.firstPlay = true;
-			video.playVideo();
+			video.playVideo(); // note: Does not play immediately.
 			if(FLAG_AUDIO) video.setVolume(100);
-			//This is the first video ever played
-			THIS.eventHandler('video-play-first');
+			
+			// Doesn't matter if it's not actually buffering,
+			// just tell the UI that the video is loading.
 			THIS.eventHandler('video-buffering');
 		}
 		else
 		{
-			console.log("videoWaiting set");
+			console.log("videoWaiting set, id=", video.param.id);
 			videoWaiting = video;
 			videoWaiting.holdPlay = true;
-			videoWaiting.setVolume(0);
-			videoWaiting.playVideo();
+			videoWaiting.playVideo();// note: It will stop once the buffering stops!
 			THIS.eventHandler('video-ready',[video.param.id]);
 		}
 
@@ -498,46 +500,48 @@ var youtubeMixer = new function() {
 	// next expected call onTransitionEnd();
 	function onPlayerStateChange(event)
 	{
-		// Be careful, this might be called after a video stops to buffer
+		// Called whenever any video starts playing
+		// Note , this can be triggered after a buffering pause, or a first play.
 		if (event.data == YT.PlayerState.PLAYING)
 		{
-			if(isBuffering == true)
+			// The video returns to play state from a buffering state
+			if(videoPlaying.isBuffering == true)
 			{
 				THIS.eventHandler("video-play",[event.target.param.id]);
-				isBuffering = false;
+				videoPlaying.isBuffering = false;
 			}
 
-			//firstplay is a custom flag, set by me.
+			// Skip further initialization if it's not the first play of this video
 			if(event.target.firstPlay == false)
 			{
 				return;
 			}
-
-			// Create the timer to check for progress, once in lifetime
-			if(timerProgress == null)
+			
+			// This is the first video played
+			if(videoFocused == null)
 			{
-				timerProgress = setInterval(onTimeCheck,100); // Every 1/10 second
+				THIS.eventHandler('video-play-first');
 			}
 
-			// Be playing the waiting video for a bit, allows it to preload
+			// By playing the waiting video for a bit, allows it to preload
 			// so that it will play instantly
 			if(event.target.holdPlay == true)
 			{
-				event.target.holdPlay=false;
+				event.target.holdPlay = false;
 				event.target.pauseVideo();
 				return;
 			}
 
 			event.target.firstPlay = false;
 
-			console.log("+ New Video Playing.");
+			console.log("+ Video Playing, id=",event.target.param.id);
 			var video = getLastFrom(ar_video);
 			var style = video.getIframe().style;
 
 			// Start fading the video into the screen
 			updateResize();
 			style.visibility = "visible";
-			style.opacity = 1; // --> will call onTransitionEnd();
+			style.opacity = 1; // --> will begin transition and call onTransitionEnd();
 
 			// Check and calculate video durations
 			var tt = video.getDuration();
@@ -567,22 +571,24 @@ var youtubeMixer = new function() {
 			
 			if(FLAG_AUDIO) crossFadeSound();
 
-			// Performance help
-			if(videoWaiting!=null)
-			if(videoWaiting.isBuffering == true)
-				videoWaiting.pauseVideo();
-
+			// Create the timer to check for progress
+			if(timerProgress == null)
+			{
+				timerProgress = setInterval(onTimeCheck,100); // Every 1/10 second
+			}
+			
 			// User callback
 			THIS.eventHandler("video-play",[video.param.id]);
 			THIS.eventHandler("playlist-update",[playlistPointer,playlist.length]);
+			
 		}
 		else if(event.data == YT.PlayerState.BUFFERING)	 //#buffering
 		{
-			isBuffering = true;
-			event.target.isBuffering = true;
-			console.log("# Video Buffering.");
-			THIS.eventHandler('video-buffering');
-
+			if(event.target == videoPlaying) {
+				videoPlaying.isBuffering = true;
+				console.log("# Video Buffering");
+				THIS.eventHandler('video-buffering');
+			}
 		}
 
 	}//---------------------------------------------------;
@@ -592,7 +598,7 @@ var youtubeMixer = new function() {
 	// Called when the fade in transition of a video ends
 	function onTransitionEnd(event)
 	{
-	   console.log(". Transition ended");
+	   console.log("- Video Transition end.");
 
 		// The first ever video to be faded in, doesn't need to be swapped
 		if(isSwapping == true)
@@ -614,7 +620,7 @@ var youtubeMixer = new function() {
 			videoWaiting = null;
 			isSwapping = false;
 			if(FLAG_AUDIO) videoPlaying.setVolume(100);
-			console.log("- removed previous video");
+			console.log("- Video Removed");
 			THIS.eventHandler("swap-end");
 		}
 
@@ -626,8 +632,7 @@ var youtubeMixer = new function() {
 	// Called every one second to check for video end trigger, #timecheck
 	function onTimeCheck()
 	{
-		if(videoFocused == null) return;
-		if(isBuffering == true) return;
+		if(videoPlaying.isBuffering == true) return;
 
 		//currentTime = videoFocused.getCurrentTime() - videoFocused.param.start; // time doesn't report well with this,
 		currentTime += 0.1;	// might cause bugs, but I can emit the time better at exact seconds.
@@ -640,7 +645,6 @@ var youtubeMixer = new function() {
 		if(isSwapping) return;
 		if(currentTime + TRANSITION_TIME > playDuration)
 		{
-			console.log("Playing next");
 			THIS.playNextVideo();
 		}
 	}//---------------------------------------------------;
@@ -660,7 +664,7 @@ var youtubeMixer = new function() {
 
 		// Safeguard, this shouldn't happen
 		if(timerVolume != null) {
-			console.warn("a crossfade is still in progress, skipping");
+			console.warn("A crossfade is still in progress, skipping");
 			return;
 		}
 
