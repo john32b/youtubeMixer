@@ -11,9 +11,10 @@ __YoutubeMixer__ is a javascript experiment. It will play youtube videos on the 
 
 
 [![Interface Demo](http://i.imgur.com/cR39HYH.gif)](http://johndimi.github.io/youtubemixer/)
+
 _A video transition in progress_
 
-###[Click Here for a Demo In action](http://johndimi.github.io/youtubemixer/)
+###[Click Here for a Demo In action](http://johndimi.github.io/youtubeMixer/)
 
 
 ## Features
