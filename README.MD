@@ -2,19 +2,19 @@ YoutubeMixer
 ============
 
 **Version** 0.11
-**Author:** JohnDimi, <johndimi@outlook.com>, twitter:[@jondmt](https://twitter.com/jondmt)  
-**Date started:** 03-2015
+**Author:** John32B
+**Initial Release:** 03-2015
 
 ----------
 
 __YoutubeMixer__ is a javascript experiment. It will play youtube videos on the background of the page and mix them using a crossfade effect.
 
+[![Interface Demo](media\demo.gif)](http://john32b.github.io/youtubeMixer/)
 
-[![Interface Demo](http://i.imgur.com/cR39HYH.gif)](http://johndimi.github.io/youtubeMixer/)
 
-_A video transition in progress_
+###### _A video transition in progress_
 
-###[Click Here for a Demo In action](http://johndimi.github.io/youtubeMixer/)
+### [Click Here for a Demo In action](http://john32b.github.io/youtubeMixer/)
 
 
 ## Features

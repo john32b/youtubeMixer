@@ -3,10 +3,9 @@
  = -------------
  = HTML background youtube player and auto-mixer
  = -------------------------------------------------------;
- = JohnDimi 2015, <johndimi@outlook.com>, @jondmt
- = http://github.com/johndimi/youtubeMixer
+ = John32B, <twitter> @john32b
+ = http://github.com/john32b/youtubeMixer
  = -------------------------------------------------------;
-
 
 Changelog:
 =========
@@ -15,7 +14,6 @@ v0.11
 ------------------
  - Buffering state now reports correctly
  - Event "video-play-first" now triggers correctly
-
  
 v0.1
 ------------------

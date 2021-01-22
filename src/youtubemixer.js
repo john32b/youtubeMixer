@@ -8,10 +8,9 @@
 ▀░░░▀ ▀▀▀ ▀░▀ ▀▀▀ ▀░▀▀
 -----------------------------------------------------;
 - Version 0.11
-- JohnDimi, <johndimi@outlook.com>, twitter@jondmt
 -----------------------------------------------------;
 - project homepage: 
-- https://github.com/johndimi/youtubemixer
+- https://github.com/john32b/youtubemixer
 ----------------------------------------------------*/
 
 // Code and comments could be polished more.
