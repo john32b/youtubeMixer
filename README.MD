@@ -9,7 +9,7 @@ YoutubeMixer
 
 __YoutubeMixer__ is a javascript experiment. It will play youtube videos on the background of the page and mix them using a crossfade effect.
 
-[![Interface Demo](media\demo.gif)](http://john32b.github.io/youtubeMixer/)
+[![Interface Demo](media/demo.gif)](http://john32b.github.io/youtubeMixer/)
 
 
 ###### _A video transition in progress_
@@ -27,7 +27,6 @@ __YoutubeMixer__ is a javascript experiment. It will play youtube videos on the 
 -  Provides a simple flexible __API__ so that you can use it without much hassle.
 
 ## Notes
-- Currently this __ONLY supports Google Chrome__, as I didn't put time to check every other browser.
 - This is an alpha version, there are bugs to fix and features to be covered in future versions.
 - The embedded videos will display ads just like youtube. You can use an ad-blocker to remove them, or don't embed videos that feature ads.
 
