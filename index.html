@@ -17,8 +17,8 @@
 <meta charset=utf-8/>
 <title>Youtube fullscreen mixer</title>
 <meta name="description" content="Background youtube player and auto-mixer."/>
-<link rel="stylesheet" href="styles.css">
-<script type="text/javascript" src="../src/youtubemixer-min.js"></script>
+<link rel="stylesheet" href="res/styles.css">
+<script type="text/javascript" src="src/youtubemixer-min.js"></script>
 <script>
 
 	// -- Global vars  ---------------------
@@ -204,6 +204,7 @@
 			return;
 		}
 
+		/*
 		if(!btest.isChrome) {
 		var q = document.querySelector("#introbox");
 		var sect = document.createElement("section");
@@ -214,7 +215,8 @@
 			sect.innerHTML = s;
 			// Add this before the first section
 			q.insertBefore(sect,document.querySelector("#introbox>section"));
-		}//---------------------------;
+		}//---------------------------; 
+		*/
 
 		// Init buttons
 		initializeButtons();
@@ -288,7 +290,7 @@
 	</section>
 	
 	<footer>
-		Version <span id="version">11</span>, John32B 2015, twitter: <em><a href="https://twitter.com/jondmt" class="link">@johndmt</a></em>
+		Version <span id="version">11</span>, John32B 2015, twitter: <em><a href="https://twitter.com/john32b" class="link">@john32b</a></em>
 	</footer>
 	</div>
 </div>
